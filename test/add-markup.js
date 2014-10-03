@@ -91,6 +91,12 @@ describe('Add markup function', function () {
     listMarkup.addMarkup('<p>This is some text:</p>\n<p>- a<br />\nb.(1) c.(2,3) d (4,5), e</p>\n<p>- f<br />\ng</p>')
       .should.eql('<p>This is some text:</p><ul><li>a</li></ul><p>b.(1) c.(2,3) d (4,5), e</p><ul><li>f</li></ul><p>g</p>');
 
+    listMarkup.addMarkup('<p>ba:</p>\n<p>• baa<br />\nbaaa</p>\n<p>• bab<br />\nbaba<br />\n- babaa<br />\n- babab<br />\n- babac</p>\n<p>B. b</p>')
+      .should.eql('<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>');
+
+    listMarkup.addMarkup('<h2>heading</h2>\n<p>A. a</p>\n<p>a) 1</p>\n<p>aa</p>\n<p>ab<br />\naba:<br />\ni) abaa<br />\nii) abab<br />\n\niii) abac</p>\n<p>ac</p>\n<p>b) g</p>\n<p>ba:</p>\n<p>• baa<br />\nbaaa</p>\n<p>• bab<br />\nbaba<br />\n- babaa<br />\n- babab<br />\n- babac</p>\n<p>B. b</p>\n<p>ba</p>\n<p>C. c</p>\n<p>ca</p>')
+      .should.eql('<h2>heading</h2>\n<p>A. a</p>\n<p>a) 1</p>\n<p>aa</p>\n<p>ab<br />\naba:<br />\ni) abaa<br />\nii) abab<br />\niii) abac</p>\n<p>ac</p>\n<p>b) g</p>\n<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>\n<p>ba</p>\n<p>C. c</p>\n<p>ca</p>');
+
     done();
 
   });

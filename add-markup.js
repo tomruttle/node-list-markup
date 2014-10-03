@@ -1,6 +1,6 @@
 'use strict';
 
-var addMarkup = function (text, callback) {
+var addMarkup = function (text) {
 
   // Blocks that indicate a new line has been started
   var blocks = '<\\/ul>|<\\/ol>|<\\/?p>|<\\/h[1-6]>|<hr>';
@@ -30,7 +30,7 @@ var addMarkup = function (text, callback) {
     'g'
 
   );
-
+console.log(match);
   // Step 1. Find likely list itels and create a separate list for each one
   if (match.test(text)) {
     text = text.replace(match, function (match, marker, content) {
@@ -61,7 +61,7 @@ var addMarkup = function (text, callback) {
 
   }
 
-  return callback(null, text);
+  return text;
 
 };
 

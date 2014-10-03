@@ -3,61 +3,74 @@
 var addMarkup = function (text) {
 
   // Blocks that indicate a new line has been started
-  var blocks = '<\\/ul>|<\\/ol>|<\\/?p>|<\\/h[1-6]>|<hr>';
-  var blocksClose = '<\\/ul>|<\\/ol>|<\\/p>|<\\/h[1-6]>';
+  var blocks = 'p|h[1-6]';
+  var blocksClose = '\\/p|\\/h[1-6]';
 
   /*
    * Match all lists, numbered or otherwise.
    */
-  var match = new RegExp('(?:' +
+  var match = new RegExp(
 
-    // Must start with a newline or end-block character
-    '(?=' + blocks + '|<br \\/>)|\\n)' +
-
-    // Can optionally have an opening <p> tag or whitespace before it
-    '(?:<p>)?\\s*' +
+    // Must start with a newline or block character
+    '(?:<(' + blocks + '|' + blocksClose + '|br \\/)>|\\n)\\s*' +
 
     // Matches: "- ", "• ", "(1) ", "1) ", "( 1 ) ", "1 ) ", "1. ", "1 . "
     '([-\u2022]|\\(?\\s*\\d+\\s*[\\.\\)])\\s+' +
 
-    // Followed by an amount of stuff
+    // Followed by the contents of the list item
     '(.+?)' +
 
     // Must be terminated by a newline or end-block character
-    '(?=\\n|' + blocksClose + '|<br \\/>)',
+    '\\s*(?=<(' + blocks + '|' + blocksClose + '|br \\/)>|\\n)',
 
     // Match everywhere
     'g'
 
   );
-console.log(match);
-  // Step 1. Find likely list itels and create a separate list for each one
+
+  // Find likely list itels and create a separate list for each one
   if (match.test(text)) {
-    text = text.replace(match, function (match, marker, content) {
+    text = text.replace(match, function (match, tag, marker, content) {
 
       // If the marker character is a digit followed by a . or a ),
       // it should be an <ol>, otherwise, it's a <ul>
       var listType = (/^\(?\s*\d+\s*[\.\)]$/.test(marker)) ? 'ol' : 'ul';
 
-      return '<' + listType + '><li>' + content + '</li></' + listType + '>';
+      return '<' + tag + '>' + '<' + listType + '><li>' + content + '</li></' + listType + '>';
 
     });
 
-    // Step 2. If two lists are adjacent, merge them into one list
-    match = new RegExp('<\\/ul>(' + blocksClose + '|<br \\/>|\\s)*<ul>', 'g');
+    // Lists should never be within blocks, so remove the end block
+    match = new RegExp('<\\/(ul|ol)>(?:<(' + blocksClose + '|br \\/)>|\\s)*', 'g');
+    text = text.replace(match, '</$1>');
+
+    // ... and remove the leading block
+    match = new RegExp('(?:<(?:' + blocks + '|br \\/)>|\\s)*(?=<ul>|<ol>)', 'g');
     text = text.replace(match, '');
 
-    match = new RegExp('<\\/ol>(' + blocksClose + '|<br \\/>|\\s)*<ol>', 'g');
+    // If we have left an open block, close it.
+    match = new RegExp('<(' + blocks + ')>(.*?)<(ul|ol)>', 'g');
+    text = text.replace(match, '<$1>$2</$1><$3>');
+
+    // If we have a leftover close p block, open it.
+    match = new RegExp('<\\/(ul|ol)>(?:<br \\/>|\\s)*(?!<p>)(.*<\\/p>)', 'g');
+    text = text.replace(match, '<\/$1><p>$2');
+
+    // If we have inadvertantly created an empty block before the list, delete it.
+    match = new RegExp('<(' + blocks + ')>(?:<br \\/>|\\s)*<\\/\\1>(?:<br \\/>|\\s)*<(ul|ol)>', 'g');
+    text = text.replace(match, '<$2>');
+
+    // If we have inadvertantly created a double close block before the list, delete it.
+    match = new RegExp('<\\/(' + blocks + ')>(?:<br \/>|\\s)*<\\/\\1>(?:<br \\/>|\\s)*<(ul|ol)>', 'g');
+    text = text.replace(match, '</$1><$2>');
+
+    // ...and delete it afterwards as well.
+    match = new RegExp('(?:<\\/(?=ul|ol)><br \\/>|\\s)*<(' + blocks + ')>(?:<br \/>|\\s)*<\\/\\1>', 'g');
     text = text.replace(match, '');
 
-    // Step 3. Lists should never be within blocks, so remove
-    match = new RegExp('<\\/ul>\\s*(' + blocksClose + ')', 'g');
-    text = text.replace(match, '</ul>');
-
-    match = new RegExp('<\\/ol>\\s*(' + blocksClose + ')', 'g');
-    text = text.replace(match, '</ol>');
-
-    text = text.replace(/(<p>.*)(?:<br \/>)\s*(?=<ul>|<ol>)/g, '$1</p>\n');
+    // If two lists are the same type and adjacent, merge them into one list
+    match = new RegExp('<\\/(ul|ol)>(<(' + blocks + '|' + blocksClose + '|br \\/)>)*\\s*<\\1>', 'g');
+    text = text.replace(match, '');
 
   }
 

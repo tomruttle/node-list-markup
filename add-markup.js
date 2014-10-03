@@ -53,8 +53,8 @@ var addMarkup = function (text) {
     text = text.replace(match, '<$1>$2</$1><$3>');
 
     // If we have a leftover close p block, open it.
-    match = new RegExp('<\\/(ul|ol)>(?:<br \\/>|\\s)*(?!<p>)(.*<\\/p>)', 'g');
-    text = text.replace(match, '<\/$1><p>$2');
+    match = new RegExp('<\\/(ul|ol)>(?:<br \\/>|\\s)*(?!<(?:p|ul|ol)>)(.*?)<\\/(p)>', 'g');
+    text = text.replace(match, '<\/$1><$3>$2<\/$3>');
 
     // If we have inadvertantly created an empty block before the list, delete it.
     match = new RegExp('<(' + blocks + ')>(?:<br \\/>|\\s)*<\\/\\1>(?:<br \\/>|\\s)*<(ul|ol)>', 'g');

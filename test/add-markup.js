@@ -79,6 +79,18 @@ describe('Add markup function', function () {
     listMarkup.addMarkup('<p>This is some text:<br />1. a<br />2. b<br />3. c</p><p>This is some more text.</p>')
       .should.eql('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li></ol><p>This is some more text.</p>');
 
+    listMarkup.addMarkup('<p>This is some text:<br />\n(1) a</p>\n<p>(2) b</p>\n<p>(3) c</p>\n<p>(4) d</p>\n<p>(5) e<br />\nThis is some more text.</p>')
+      .should.eql('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li><li>d</li><li>e</li></ol><p>This is some more text.</p>');
+
+    done();
+
+  });
+
+  it ('works with multiple lines in a list-item', function (done) {
+
+    listMarkup.addMarkup('<p>This is some text:</p>\n<p>- a<br />\nb.(1) c.(2,3) d (4,5), e</p>\n<p>- f<br />\ng</p>')
+      .should.eql('<p>This is some text:</p><ul><li>a</li></ul><p>b.(1) c.(2,3) d (4,5), e</p><ul><li>f</li></ul><p>g</p>');
+
     done();
 
   });

@@ -1,0 +1,32 @@
+{
+  "name": "list-markup",
+  "version": "0.0.1",
+  "description": "Parses text and adds HTML markup around what it thinks are lists.",
+  "keywords": [
+    "html",
+    "lists",
+    "javascript",
+    "markup"
+  ],
+  "author": {
+    "name": "Tom Ruttle",
+    "email": "thruttle@gmail.com",
+    "url": "thruttle.com"
+  },
+  "homepage": "https://github.com/thruttle/node-list-markup",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thruttle/node-list-markup.git"
+  },
+  "main": "./add-markup.js",
+  "scripts": {
+    "test": "mocha test -R spec"
+  },
+  "engines": {
+    "node": ">=0.1"
+  },
+  "bugs": {
+    "url": "http://github.com/thruttle/node-list-markup/issues",
+    "email": "thruttle@gmail.com"
+  },
+  "license": "Apache, Version 2.0"

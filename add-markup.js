@@ -21,7 +21,7 @@ var addMarkup = function (text) {
     '([' + glyphs + ']|\\(?\\s*\\d+\\s*[\\.\\)])\\s+' +
 
     // Followed by the contents of the list item
-    '(.+?)' +
+    '([\\s\\S]+?)' +
 
     // Must be terminated by a newline or end-block character
     '\\s*(?=<(' + blocks + '|' + blocksClose + '|br \\/)>|\\n)',
@@ -51,13 +51,16 @@ var addMarkup = function (text) {
     match = new RegExp('(?:<(?:' + blocks + '|br \\/)>|\\s)*(?=<ul>|<ol>)', 'g');
     text = text.replace(match, '');
 
+    // Closed lists should always be followed by a new opening block.
+    match = new RegExp('<\\/(ul|ol)>\\s*(?=[^<$]\\S)', 'g');
+    text = text.replace(match, '</$1><p>');
+
     // If we have left an open block, close it.
-    // (Ignores </p> tags because JS doesn't support negative lookbehinds.)
-    match = new RegExp('<(' + blocks + ')>(.*?)<(ul|ol)>', 'g');
+    match = new RegExp('<(' + blocks + ')>((?:[^<]|<br \\/>)*?)(?!<\\/\\1>)*<(ul|ol)>', 'g');
     text = text.replace(match, '<$1>$2</$1><$3>');
 
     // If we have a leftover close p block, open it.
-    match = new RegExp('<\\/(ul|ol)>(?:\\s|<br \\/>)*?(?!<)(.+?)<(ul|ol|\\/ul|\\/ol|' + blocks + '|' + blocksClose + ')>', 'g');
+    match = new RegExp('<\\/(ul|ol)>([^<]+?)<(ul|ol|\\/ul|\\/ol|' + blocks + '|' + blocksClose + ')>', 'g');
     text = text.replace(match, '</$1><p>$2</p><$3>');
 
     // If we have inadvertantly created an empty block before the list, delete it.

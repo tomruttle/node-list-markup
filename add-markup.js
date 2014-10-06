@@ -6,6 +6,9 @@ var addMarkup = function (text) {
   var blocks = 'p|h[1-6]';
   var blocksClose = '\\/p|\\/h[1-6]';
 
+  // Glyphs that we expect to start a new list
+  var glyphs = '-\u2022';
+
   /*
    * Match all lists, numbered or otherwise.
    */
@@ -15,7 +18,7 @@ var addMarkup = function (text) {
     '(?:<(' + blocks + '|' + blocksClose + '|br \\/)>|\\n)\\s*' +
 
     // Matches: "- ", "• ", "(1) ", "1) ", "( 1 ) ", "1 ) ", "1. ", "1 . "
-    '([-\u2022]|\\(?\\s*\\d+\\s*[\\.\\)])\\s+' +
+    '([' + glyphs + ']|\\(?\\s*\\d+\\s*[\\.\\)])\\s+' +
 
     // Followed by the contents of the list item
     '(.+?)' +
@@ -49,12 +52,13 @@ var addMarkup = function (text) {
     text = text.replace(match, '');
 
     // If we have left an open block, close it.
+    // (Ignores </p> tags because JS doesn't support negative lookbehinds.)
     match = new RegExp('<(' + blocks + ')>(.*?)<(ul|ol)>', 'g');
     text = text.replace(match, '<$1>$2</$1><$3>');
 
     // If we have a leftover close p block, open it.
-    match = new RegExp('<\\/(ul|ol)>(?:<br \\/>|\\s)*(?!<(?:p|ul|ol)>)(.*?)<\\/(p)>', 'g');
-    text = text.replace(match, '<\/$1><$3>$2<\/$3>');
+    match = new RegExp('<\\/(ul|ol)>(?:\\s|<br \\/>)*?(?!<)(.+?)<(ul|ol|\\/ul|\\/ol|' + blocks + '|' + blocksClose + ')>', 'g');
+    text = text.replace(match, '</$1><p>$2</p><$3>');
 
     // If we have inadvertantly created an empty block before the list, delete it.
     match = new RegExp('<(' + blocks + ')>(?:<br \\/>|\\s)*<\\/\\1>(?:<br \\/>|\\s)*<(ul|ol)>', 'g');
@@ -65,8 +69,8 @@ var addMarkup = function (text) {
     text = text.replace(match, '</$1><$2>');
 
     // ...and delete it afterwards as well.
-    match = new RegExp('(?:<\\/(?=ul|ol)><br \\/>|\\s)*<(' + blocks + ')>(?:<br \/>|\\s)*<\\/\\1>', 'g');
-    text = text.replace(match, '');
+    match = new RegExp('<\\/(' + blocks + ')>(?:<br \\/>|\\s)*?<\\/\\1>', 'g');
+    text = text.replace(match, '<\/$1>');
 
     // If two lists are the same type and adjacent, merge them into one list
     match = new RegExp('<\\/(ul|ol)>(<(' + blocks + '|' + blocksClose + '|br \\/)>)*\\s*<\\1>', 'g');

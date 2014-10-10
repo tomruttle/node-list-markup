@@ -124,4 +124,31 @@ describe('Add markup function', function () {
 
   });
 
+  it ('should be idempotent', function (done) {
+
+    listMarkup.addMarkup('<p>This is some text:</p><ul><li>a</li></ul><p>b.(1) c.(2,3) d (4,5), e</p><ul><li>f</li></ul><p>g</p>')
+      .should.eql('<p>This is some text:</p><ul><li>a</li></ul><p>b.(1) c.(2,3) d (4,5), e</p><ul><li>f</li></ul><p>g</p>');
+
+    listMarkup.addMarkup('<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>')
+      .should.eql('<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>');
+
+    listMarkup.addMarkup('<p>This is some text.<br />\nThis is some more text:</p><ul><li>a</li><li>b</li><li>c</li><li>d</li></ul>')
+      .should.eql('<p>This is some text.<br />\nThis is some more text:</p><ul><li>a</li><li>b</li><li>c</li><li>d</li></ul>');
+
+    listMarkup.addMarkup('<h2>heading</h2>\n<p>A. a</p>\n<p>a) 1</p>\n<p>aa</p>\n<p>ab<br />\naba:<br />\ni) abaa<br />\nii) abab<br />\niii) abac</p>\n<p>ac</p>\n<p>b) g</p>\n<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>\n<p>ba</p>\n<p>C. c</p>\n<p>ca</p>')
+      .should.eql('<h2>heading</h2>\n<p>A. a</p>\n<p>a) 1</p>\n<p>aa</p>\n<p>ab<br />\naba:<br />\ni) abaa<br />\nii) abab<br />\niii) abac</p>\n<p>ac</p>\n<p>b) g</p>\n<p>ba:</p><ul><li>baa</li></ul><p>baaa</p><ul><li>bab</li></ul><p>baba</p><ul><li>babaa</li><li>babab</li><li>babac</li></ul><p>B. b</p>\n<p>ba</p>\n<p>C. c</p>\n<p>ca</p>');
+
+    listMarkup.addMarkup('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li><li>d</li><li>e</li><li>f</li><li>g</li><li>h</li></ol><p>"This is a string"<br />"This is another string"</p><ol><li>i</li><li>j</li></ol><p>"This is a string"<br />"This is another string"<br />This is some text.</p>')
+      .should.eql('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li><li>d</li><li>e</li><li>f</li><li>g</li><li>h</li></ol><p>"This is a string"<br />"This is another string"</p><ol><li>i</li><li>j</li></ol><p>"This is a string"<br />"This is another string"<br />This is some text.</p>');
+
+    listMarkup.addMarkup('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li><li>d</li></ol>')
+      .should.eql('<p>This is some text:</p><ol><li>a</li><li>b</li><li>c</li><li>d</li></ol>');
+
+    listMarkup.addMarkup('<p>This is some text:</p><ol><li>a</li></ol><p>b<br />c</p><ol><li>d</li></ol>')
+      .should.eql('<p>This is some text:</p><ol><li>a</li></ol><p>b<br />c</p><ol><li>d</li></ol>');
+
+    done();
+
+  });
+
 });

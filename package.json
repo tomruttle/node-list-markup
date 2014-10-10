@@ -1,6 +1,6 @@
 {
   "name": "list-markup",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parses text and adds HTML markup around what it thinks are lists.",
   "keywords": [
     "html",

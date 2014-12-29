@@ -1,6 +1,6 @@
 {
   "name": "list-markup",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parses text and adds HTML markup around what it thinks are lists.",
   "keywords": [
     "html",
@@ -10,13 +10,13 @@
   ],
   "author": {
     "name": "Tom Ruttle",
-    "email": "thruttle@gmail.com",
-    "url": "thruttle.com"
+    "email": "tom@tomruttle.com",
+    "url": "tomruttle.com"
   },
-  "homepage": "https://github.com/thruttle/node-list-markup",
+  "homepage": "https://github.com/tomruttle/node-list-markup",
   "repository": {
     "type": "git",
-    "url": "git://github.com/thruttle/node-list-markup.git"
+    "url": "git://github.com/tomruttle/node-list-markup.git"
   },
   "main": "./add-markup.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "node": ">=0.1"
   },
   "bugs": {
-    "url": "http://github.com/thruttle/node-list-markup/issues",
+    "url": "http://github.com/tomruttle/node-list-markup/issues",
     "email": "thruttle@gmail.com"
   },
   "license": "Apache, Version 2.0"

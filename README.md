@@ -26,3 +26,7 @@ listMarkup = require('list-markup');
 var simpleString = 'String to be converted into list.';
 var listyString = listMarkup.addMarkup(simpleString);
 </pre>
+
+##Todo
+
+Rewite using regexpbuilder.js: https://github.com/thebinarysearchtree/regexpbuilderjs
